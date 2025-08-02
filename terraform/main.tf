@@ -3,7 +3,6 @@ provider "aws" {
 }
 
 resource "aws_security_group" "invoify_sg" {
-  # Remove explicit 'name' to let AWS generate a unique name.
   description = "Allow HTTP and SSH"
 
   ingress {

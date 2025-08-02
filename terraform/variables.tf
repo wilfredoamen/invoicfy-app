@@ -13,11 +13,11 @@ variable "instance_type" {
 variable "key_name" {
   description = "AWS EC2 key pair name"
   type        = string
-  default     = "invoify-ci-key"
+  default     = "oz-key-pair"
 }
 
 variable "private_key_path" {
   description = "Path to the private key on your local machine"
   type        = string
-  default     = "~/.ssh/invoify-ci-key"
+  default     = "~/.ssh/oz-key-pair.pem"
 }

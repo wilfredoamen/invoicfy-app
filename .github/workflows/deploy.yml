@@ -32,14 +32,14 @@ jobs:
     - name: Write SSH key to file
       run: |
         mkdir -p ~/.ssh
-        echo "${{ secrets.EC2_SSH_KEY }}" > ~/.ssh/invoify-ci-key
-        chmod 600 ~/.ssh/invoify-ci-key
+        echo "${{ secrets.EC2_SSH_KEY }}" > ~/.ssh/oz-key-pair.pem
+        chmod 600 ~/.ssh/oz-key-pair.pem
 
     - name: Terraform Init & Apply
       working-directory: ./terraform
       run: |
         terraform init
-        terraform apply -auto-approve -var="private_key_path=~/.ssh/invoify-ci-key"
+        terraform apply -auto-approve -var="private_key_path=~/.ssh/oz-key-pair.pem"
 
     - name: Extract EC2 Public IP
       id: ec2
