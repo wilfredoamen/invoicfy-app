@@ -1,9 +1,7 @@
-version: '3.8'
-
+version: '3'
 services:
   invoify:
-    image: "${DOCKER_USERNAME}/invoify:${VERSION}"
+    image: wilfred2018/voicfy
     ports:
       - "80:3000"
     restart: always
-    container_name: invoify
