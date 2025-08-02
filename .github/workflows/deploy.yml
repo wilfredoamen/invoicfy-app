@@ -1,28 +1,28 @@
-name: Deploy to EC2
+name: Deploy Invoify App
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
   workflow_dispatch:
 
 env:
-  IMAGE_NAME: wilfred2018/voicfy
+  IMAGE_NAME: ${{ secrets.DOCKER_USERNAME }}/voicfy
   VERSION: ${{ github.sha }}
+  DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
+    - name: Checkout repo
       uses: actions/checkout@v3
 
-    - name: Deploy via SSH
+    - name: Deploy to EC2 using SSH
       uses: appleboy/ssh-action@v0.1.10
       with:
         host: ${{ secrets.EC2_HOST }}
-        username: ${{ secrets.EC2_USERNAME }}
+        username: ubuntu
         key: ${{ secrets.EC2_SSH_KEY }}
         script: |
           # Install Docker
@@ -49,21 +49,17 @@ jobs:
           rm -rf ./*
 
           # Pull latest repo files
-          git clone https://github.com/${{ github.repository }} . --branch main --single-branch
+          git clone https://github.com/wilfredoamen/invoicfy-app . --branch main --single-branch
 
-          # Create/overwrite .env file if needed
+          # Write .env
           echo "IMAGE_NAME=${{ env.IMAGE_NAME }}" > .env
           echo "VERSION=${{ env.VERSION }}" >> .env
-          echo "DOCKER_USERNAME=${{ secrets.DOCKER_USERNAME }}" >> .env
+          echo "DOCKER_USERNAME=${{ env.DOCKER_USERNAME }}" >> .env
 
           # Login to Docker Hub
-          docker login -u $DOCKER_USERNAME -p ${{ secrets.DOCKER_TOKEN }}
+          echo "${{ secrets.DOCKER_TOKEN }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
 
-          # Pull latest image version
+          # Pull image and run
           docker pull $IMAGE_NAME:$VERSION
-
-          # Stop previous containers
           docker-compose down || true
-
-          # Start containers using your repo's docker-compose.yml
           docker-compose --env-file .env up -d
