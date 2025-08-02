@@ -4,7 +4,7 @@ provider "aws" {
 
 resource "aws_security_group" "invoify_sg" {
   name        = "invoify-sg"
-  description = "Allow HTTP and SSH" # CHANGED LINE: must match AWS exactly
+  description = "Allow HTTP and SSH"
 
   ingress {
     from_port   = 22
@@ -12,12 +12,14 @@ resource "aws_security_group" "invoify_sg" {
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
+
   ingress {
     from_port   = 80
     to_port     = 80
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
+
   egress {
     from_port   = 0
     to_port     = 0
@@ -47,5 +49,9 @@ resource "aws_instance" "invoify" {
       private_key = file(var.private_key_path)
       host        = self.public_ip
     }
+  }
+
+  tags = {
+    Name = "InvoifyServer"
   }
 }

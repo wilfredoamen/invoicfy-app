@@ -27,19 +27,19 @@ jobs:
       with:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: us-east-1 # Change this if your region is different
+        aws-region: us-east-1
 
     - name: Write SSH key to file
       run: |
         mkdir -p ~/.ssh
-        echo "${{ secrets.EC2_SSH_KEY }}" > ~/.ssh/oz-key-pair.pem
-        chmod 600 ~/.ssh/oz-key-pair.pem
+        echo "${{ secrets.EC2_SSH_KEY }}" > ~/.ssh/invoify-ci-key
+        chmod 600 ~/.ssh/invoify-ci-key
 
     - name: Terraform Init & Apply
       working-directory: ./terraform
       run: |
         terraform init
-        terraform apply -auto-approve -var="private_key_path=~/.ssh/oz-key-pair.pem"
+        terraform apply -auto-approve -var="private_key_path=~/.ssh/invoify-ci-key"
 
     - name: Extract EC2 Public IP
       id: ec2
